@@ -1,11 +1,15 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import Notiflix, { Notify } from "notiflix";
+// import Notiflix from "notiflix";
+import { Notify } from "notiflix/build/notiflix-notify-aio";
 
-const start = document.querySelector("[data-start]");
-const input = document.querySelector("#datetime-picker");
+const jsStart = document.querySelector("[data-start]");
+const dataDays = document.querySelector("[data-days]");
+const dataHours = document.querySelector("[data-hours]");
+const dataMinutes = document.querySelector("[data-minutes]");
+const dataSeconds = document.querySelector("[data-seconds]");
 
-flatpickr(input, options);
+jsStart.disabled = true;
 
 const options = {
   enableTime: true,
@@ -13,9 +17,20 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+    if (selectedDates[0].getTime() <= options.defaultDate.getTime()) {
+      Notify.failure("Please choose a date in the future");
+    } else {
+      jsStart.disabled = false;
+      console.log(selectedDates[0]);
+    }
   },
 };
+
+const flatPkr = flatpickr("#datetime-picker", options);
+
+function addLeadingZero(value) {
+  return value.toString().padStart(2, "0");
+}
 
 function convertMs(ms) {
   const second = 1000;
@@ -28,15 +43,43 @@ function convertMs(ms) {
   const minutes = Math.floor(((ms % day) % hour) / minute);
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
+  dataDays.innerHTML = addLeadingZero(days);
+  dataHours.innerHTML = addLeadingZero(hours);
+  dataMinutes.innerHTML = addLeadingZero(minutes);
+  dataSeconds.innerHTML = addLeadingZero(seconds);
+
   return { days, hours, minutes, seconds };
 }
 
-// console.log(convertMs(2000));
-// console.log(convertMs(140000));
-// console.log(convertMs(24140000));
+let timer = null;
 
-function addLeadingZero(value) {
-  value.padStart(2, "0");
+function countTime() {
+  timer = setInterval(() => {
+    let timeDiff = flatPkr.selectedDates[0].getTime() - new Date().getTime();
+    if (timeDiff > 0) {
+      convertMs(timeDiff);
+      console.log("if yes");
+      jsStart.disabled = true;
+    } else {
+      clearInterval(timer);
+      console.log("if no");
+      jsStart.disabled = false;
+    }
+  }, 1000);
 }
+jsStart.addEventListener("click", countTime);
 
-Notify.failure("Please choose a date in the future");
+// jsStart.addEventListener("click", () => {
+//   let timeDiff = flatPkr.selectedDates[0].getTime() - new Date().getTime();
+//   timer = setInterval(() => {
+//     if (timeDiff > 0) {
+//       convertMs(timeDiff);
+//       console.log("if yes");
+//       jsStart.disabled = true;
+//     } else {
+//       clearInterval(timer);
+//       console.log("if no");
+//       jsStart.disabled = false;
+//     }
+//   }, 1000);
+// });

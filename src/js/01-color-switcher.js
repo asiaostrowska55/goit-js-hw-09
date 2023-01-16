@@ -1,7 +1,7 @@
 const jsStart = document.querySelector("[data-start]");
 const jsStop = document.querySelector("[data-stop]");
 const body = document.querySelector("body");
-let timerID = null;
+let timerID;
 
 function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
