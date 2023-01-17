@@ -1,50 +1,34 @@
 import { Notify } from "notiflix/build/notiflix-notify-aio";
 
+const firstDelay = document.querySelector('input[name="delay"]');
+const delayStep = document.querySelector('input[ name="step"]');
+const amount = document.querySelector('input[name="amount"]');
+
 function createPromise(position, delay) {
-  const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  } else {
-    Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-  }
+  return new Promise((resolve, reject) => {
+    const shouldResolve = Math.random() > 0.3;
+    if (shouldResolve) {
+      setTimeout(() => resolve({ position, delay }));
+    } else {
+      setTimeout(() => reject({ position, delay }));
+    }
+  });
 }
 
-createPromise(2, 1500)
-  .then(({ position, delay }) => {
-    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  })
-  .catch(({ position, delay }) => {
-    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-  });
+const form = document.querySelector(".form");
 
-// const isSuccess = false;
-
-// const promise = new Promise((resolve, reject) => {
-//   setTimeout(() => {
-//     if (isSuccess) {
-//       resolve("Success! Value passed to resolve function");
-//     } else {
-//       reject("Error! Error passed to reject function");
-//     }
-//   }, 2000);
-// });
-
-// // Will run first
-// console.log("Before promise.then()");
-
-// // Registering promise callbacks
-// promise.then(
-//   // onResolve will run third or not at all
-//   (value) => {
-//     console.log("onResolve call inside promise.then()");
-//     console.log(value); // "Success! Value passed to resolve function"
-//   },
-//   // onReject will run third or not at all
-//   (error) => {
-//     console.log("onReject call inside promise.then()");
-//     console.log(error); // "Error! Error passed to reject function"
-//   }
-// );
-
-// // Will run second
-// console.log("After promise.then()");
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  for (let i = 0; i < amount.value; i++) {
+    setTimeout(() => {
+      let time = parseInt(delayStep.value) * i;
+      createPromise(i, time + parseInt(firstDelay.value))
+        .then(({ position, delay }) => {
+          Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        })
+        .catch(({ position, delay }) => {
+          Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+        });
+    }, parseInt(delayStep.value) * i);
+  }
+});
