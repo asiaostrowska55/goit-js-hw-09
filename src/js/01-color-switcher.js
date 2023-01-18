@@ -1,7 +1,8 @@
 const jsStart = document.querySelector("[data-start]");
 const jsStop = document.querySelector("[data-stop]");
 const body = document.querySelector("body");
-let timerID;
+
+jsStop.disabled = true;
 
 function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
@@ -9,13 +10,15 @@ function getRandomHexColor() {
 
 jsStart.addEventListener("click", () => {
   jsStart.disabled = true;
+  jsStop.disabled = false;
   timerID = setInterval(() => {
     body.style.backgroundColor = `${getRandomHexColor()}`;
   }, 1000);
 });
 
+let timerID;
 jsStop.addEventListener("click", () => {
-  jsStop.disabled = true;
   jsStart.disabled = false;
+  jsStop.disabled = true;
   clearInterval(timerID);
 });
