@@ -57,11 +57,9 @@ function countTime() {
     let timeDiff = flatPkr.selectedDates[0].getTime() - new Date().getTime();
     if (timeDiff > 0) {
       convertMs(timeDiff);
-      console.log("if yes");
       jsStart.disabled = true;
     } else {
       clearInterval(timer);
-      console.log("if no");
       jsStart.disabled = false;
     }
   }, 1000);
