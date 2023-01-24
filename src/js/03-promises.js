@@ -19,10 +19,10 @@ const form = document.querySelector(".form");
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  for (let i = 1; i < amount.value; i++) {
+  for (let i = 0; i < amount.value; i++) {
     setTimeout(() => {
       let time = parseInt(delayStep.value) * i;
-      createPromise(i, time + parseInt(firstDelay.value))
+      createPromise(i + 1, time + parseInt(firstDelay.value))
         .then(({ position, delay }) => {
           Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
         })
